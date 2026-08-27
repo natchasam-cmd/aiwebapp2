@@ -1,4 +1,5 @@
 import { AppHeader } from "./components/AppHeader";
+import { DetectionPanel } from "./components/DetectionPanel";
 import { FeatureCard } from "./components/FeatureCard";
 export default function Home() {
   return (
@@ -13,9 +14,10 @@ export default function Home() {
       title="AI Chat"
       description="สนทนากับ Generative AI"
       />
-      <button>
-        Start Detection
-      </button>
+      <br></br>
+
+       <DetectionPanel/>
+
     </main>
   );
 }
