@@ -1,6 +1,7 @@
 import { AppHeader } from "./components/AppHeader";
 import { DetectionPanel } from "./components/DetectionPanel";
 import { FeatureCard } from "./components/FeatureCard";
+import { ApiStatus } from "./components/ApiStatus";
 export default function Home() {
   return (
     <main>
@@ -17,6 +18,8 @@ export default function Home() {
       <br></br>
 
        <DetectionPanel/>
+        <ApiStatus/>
+        <h1>Opjeect Detection with AI</h1>
 
     </main>
   );
