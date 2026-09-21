@@ -1,5 +1,8 @@
 "use client";
-import { useState } from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
 type Detection = {
     class: string;
     confidence: number;
@@ -27,18 +30,37 @@ export function DetectionPanel() {
         loading,
         setLoading
     ] = useState(false);
+     const [hasAnalyzed, setHasAnalyzed] = useState(false);
     const [
         error,
         setError
     ] = useState("");
+    const [previewUrl, setPreviewUrl] =
+        useState<string | null>(null);
+    useEffect(() => {
+        if (!selectedFile) {
+            setPreviewUrl(null);
+            return;
+        }
+        const url =
+            URL.createObjectURL(selectedFile);
+        setPreviewUrl(url);
+        return () => {
+            URL.revokeObjectURL(url);
+        };
+    }, [selectedFile]);
     function handleFileChange(
         event:
             React.ChangeEvent<HTMLInputElement>
     ) {
         const file =
             event.target.files?.[0];
+       
         if (file) {
             setSelectedFile(file);
+            setDetections([]);
+            setHasAnalyzed(false);
+            setError("");
         }
     }
     async function detectObjects() {
@@ -82,54 +104,96 @@ export function DetectionPanel() {
         } finally {
             setLoading(false);
         }
+        {
+            previewUrl && (
+                <div className="ux-preview">
+                    {/* eslint-disable-next-line
+ @next/next/no-img-element */}
+                    <img
+                        src={previewUrl}
+                        alt="Selected image preview"
+                    />
+                </div>
+            )
+        }
     }
     return (
-        <section>
-            <h2>
-                Object Detection
-            </h2>
-            <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-            />
-            {selectedFile && (
-                <p>
-                    Selected:
-                    {selectedFile.name}
-                </p>
-            )}
-            <button
-                onClick={detectObjects}
-                disabled={loading}
-            >
-                {
-                    loading
-                        ? "Detecting..."
-                        : "Detect Objects"
-                }
-            </button>
-            {error && (
-                <p>
-                    {error}
-                </p>
-            )}
-            <h3>
-                Detection Result
-            </h3>
-            {detections.map(
-                (item, index) => (
-                    <div key={index}>
-                        <strong>
-                            {item.class}
-                        </strong>
-                        <p>
-                            Confidence:
-                            {item.confidence}%
-                        </p>
-                    </div>
-                )
-            )}
-        </section>
+        <section className="ux-card ux-detection">
+ <div className="ux-section-heading">
+ <p className="ux-eyebrow">
+ AI IMAGE ANALYSIS
+ </p>
+ <h2>Object Detection</h2>
+ <p className="ux-muted">
+ Upload an image to identify
+ objects using the YOLO model.
+ </p>
+ </div>
+ <div className="ux-upload">
+ <label className="ux-file-button">
+ <input
+ className="ux-file-input"
+ type="file"
+ accept="image/*"
+ onChange={handleFileChange}
+ disabled={loading}
+ />
+ <span>Choose Image</span>
+ </label>
+ <span className="ux-file-name">
+ {selectedFile
+ ? selectedFile.name
+ : "No image selected"}
+ </span>
+</div>
+<button
+ type="button"
+ className="ux-button"
+ onClick={detectObjects}
+ disabled={!selectedFile || loading}
+>
+ {loading
+ ? "Detecting..."
+ : "Detect Objects"}
+</button>
+{error && (
+ <div
+ className="ux-error"
+ role="alert"
+ >
+ {error}
+ </div>
+)}
+<div className="ux-results">
+ {detections.map((item, index) => (
+ <article
+ className="ux-result-item"
+ key={index}
+ >
+ <strong>{item.class}</strong>
+ <p>
+ Confidence: {item.confidence}%
+ </p>
+ <div className="ux-confidence-track">
+ <div
+ className="ux-confidence-fill"
+ style={{
+ width: `${
+ Math.max(
+ 0,
+ Math.min(
+ 100,
+ item.confidence
+ )
+ )
+ }%`,
+ }}
+ />
+ </div>
+ </article>
+ ))}
+</div>
+</section>
+
     );
 }
