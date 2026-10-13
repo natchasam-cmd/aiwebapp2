@@ -1,13 +1,25 @@
-export function AppHeader() {
- return (
- <header className="ux-header">
- <p className="ux-eyebrow">
- AI APPLICATION DEVELOPMENT
- </p>
- <h1>AI Vision Application</h1>
- <p className="ux-header-description">
- Object Detection with AI
- </p>
- </header>
- );
+
+export default function AppHeader() {
+  return (
+    <header className="app-header">
+      <a href="#" className="header-brand">
+        <span className="brand-logo">AI</span>
+
+        <span className="brand-text">
+          <strong>AIE Vision</strong>
+          <small>INTELLIGENT DETECTION</small>
+        </span>
+      </a>
+
+      <nav className="header-nav">
+        <a href="#">หน้าแรก</a>
+        <a href="#detection">ตรวจจับคน</a>
+        <a href="#features">คุณสมบัติ</a>
+      </nav>
+
+      <a href="#detection" className="header-cta">
+        เริ่มใช้งาน <span>↗</span>
+      </a>
+    </header>
+  );
 }
